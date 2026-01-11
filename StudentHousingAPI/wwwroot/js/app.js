@@ -1,6 +1,14 @@
 // API Configuration - points to backend
 const API_BASE_URL = window.location.origin + '/api';
 
+// Utility function to escape HTML and prevent XSS
+function escapeHtml(text) {
+    if (text === null || text === undefined) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 // State management
 let authToken = localStorage.getItem('authToken');
 let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
@@ -109,10 +117,17 @@ function showLogin() {
 }
 
 function showMainContent() {
+    // Validate currentUser data
+    if (!currentUser || !currentUser.username || !currentUser.role || !currentUser.userId) {
+        console.error('Invalid user data in localStorage');
+        handleLogout();
+        return;
+    }
+    
     document.getElementById('login-section').style.display = 'none';
     document.getElementById('main-content').style.display = 'block';
     document.getElementById('user-info').style.display = 'flex';
-    document.getElementById('username-display').textContent = `Welcome, ${currentUser.username} (${currentUser.role})`;
+    document.getElementById('username-display').textContent = `Welcome, ${escapeHtml(currentUser.username)} (${escapeHtml(currentUser.role)})`;
     
     // Show/hide elements based on role
     if (currentUser.role === 'Student') {
@@ -187,12 +202,12 @@ function displayIssues(issues) {
     
     container.innerHTML = issues.map(issue => `
         <div class="card">
-            <h4>Issue #${issue.id}</h4>
-            <p><strong>Description:</strong> ${issue.description}</p>
-            <p><strong>Shared Space:</strong> ${issue.sharedSpace}</p>
-            <p><strong>Status:</strong> <span class="status ${issue.status.toLowerCase()}">${issue.status}</span></p>
-            ${issue.assignedToUsername ? `<p><strong>Assigned To:</strong> ${issue.assignedToUsername}</p>` : ''}
-            ${issue.photoProof ? `<p><strong>Photo Proof:</strong> <a href="${issue.photoProof}" target="_blank">View</a></p>` : ''}
+            <h4>Issue #${parseInt(issue.id, 10)}</h4>
+            <p><strong>Description:</strong> ${escapeHtml(issue.description)}</p>
+            <p><strong>Shared Space:</strong> ${escapeHtml(issue.sharedSpace)}</p>
+            <p><strong>Status:</strong> <span class="status ${escapeHtml(issue.status).toLowerCase()}">${escapeHtml(issue.status)}</span></p>
+            ${issue.assignedToUsername ? `<p><strong>Assigned To:</strong> ${escapeHtml(issue.assignedToUsername)}</p>` : ''}
+            ${issue.photoProof ? `<p><strong>Photo Proof:</strong> <a href="${escapeHtml(issue.photoProof)}" target="_blank" rel="noopener noreferrer">View</a></p>` : ''}
             <p><strong>Created:</strong> ${new Date(issue.createdAt).toLocaleString()}</p>
         </div>
     `).join('');
@@ -245,18 +260,29 @@ function displayTasks(containerId, tasks) {
         return;
     }
     
+    const taskType = containerId.includes('cleaning') ? 'cleaning' : 'garbage';
+    
     container.innerHTML = tasks.map(task => `
         <div class="card">
-            <h4>Task #${task.id}</h4>
-            <p><strong>Description:</strong> ${task.description}</p>
-            <p><strong>${task.sharedSpace ? 'Shared Space' : 'Location'}:</strong> ${task.sharedSpace || task.location}</p>
-            <p><strong>Status:</strong> <span class="status ${task.status.toLowerCase()}">${task.status}</span></p>
-            ${task.assignedUsername ? `<p><strong>Assigned To:</strong> ${task.assignedUsername}</p>` : ''}
+            <h4>Task #${parseInt(task.id, 10)}</h4>
+            <p><strong>Description:</strong> ${escapeHtml(task.description)}</p>
+            <p><strong>${task.sharedSpace ? 'Shared Space' : 'Location'}:</strong> ${escapeHtml(task.sharedSpace || task.location)}</p>
+            <p><strong>Status:</strong> <span class="status ${escapeHtml(task.status).toLowerCase()}">${escapeHtml(task.status)}</span></p>
+            ${task.assignedUsername ? `<p><strong>Assigned To:</strong> ${escapeHtml(task.assignedUsername)}</p>` : ''}
             <p><strong>Due Date:</strong> ${new Date(task.dueDate).toLocaleDateString()}</p>
             ${task.status === 'Pending' && task.assignedUserId === currentUser.userId ? 
-                `<button class="btn btn-success" onclick="completeTask('${containerId.includes('cleaning') ? 'cleaning' : 'garbage'}', ${task.id})">Complete</button>` : ''}
+                `<button class="btn btn-success" data-task-type="${taskType}" data-task-id="${parseInt(task.id, 10)}">Complete</button>` : ''}
         </div>
     `).join('');
+    
+    // Add event delegation for complete buttons
+    container.querySelectorAll('.btn-success').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const taskType = e.target.dataset.taskType;
+            const taskId = e.target.dataset.taskId;
+            await completeTask(taskType, taskId);
+        });
+    });
 }
 
 async function completeTask(taskType, taskId) {
@@ -284,29 +310,39 @@ async function loadDashboard() {
 function displayDashboard(stats) {
     const container = document.getElementById('dashboard-stats');
     
+    // Ensure all values are numbers
+    const safeStats = {
+        openIssues: parseInt(stats.openIssues, 10) || 0,
+        inProgressIssues: parseInt(stats.inProgressIssues, 10) || 0,
+        resolvedIssues: parseInt(stats.resolvedIssues, 10) || 0,
+        closedIssues: parseInt(stats.closedIssues, 10) || 0,
+        overdueTasks: parseInt(stats.overdueTasks, 10) || 0,
+        tasksDueToday: parseInt(stats.tasksDueToday, 10) || 0
+    };
+    
     container.innerHTML = `
         <div class="stat-card">
-            <h3>${stats.openIssues}</h3>
+            <h3>${safeStats.openIssues}</h3>
             <p>Open Issues</p>
         </div>
         <div class="stat-card">
-            <h3>${stats.inProgressIssues}</h3>
+            <h3>${safeStats.inProgressIssues}</h3>
             <p>In Progress Issues</p>
         </div>
         <div class="stat-card">
-            <h3>${stats.resolvedIssues}</h3>
+            <h3>${safeStats.resolvedIssues}</h3>
             <p>Resolved Issues</p>
         </div>
         <div class="stat-card">
-            <h3>${stats.closedIssues}</h3>
+            <h3>${safeStats.closedIssues}</h3>
             <p>Closed Issues</p>
         </div>
         <div class="stat-card">
-            <h3>${stats.overdueTasks}</h3>
+            <h3>${safeStats.overdueTasks}</h3>
             <p>Overdue Tasks</p>
         </div>
         <div class="stat-card">
-            <h3>${stats.tasksDueToday}</h3>
+            <h3>${safeStats.tasksDueToday}</h3>
             <p>Tasks Due Today</p>
         </div>
     `;
