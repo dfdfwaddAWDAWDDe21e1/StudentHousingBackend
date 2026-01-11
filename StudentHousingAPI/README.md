@@ -206,11 +206,44 @@ dotnet test
 
 ## Security Considerations
 
-- Change the JWT secret key in production
-- Use HTTPS in production
-- Implement proper password policies
-- Consider using a more secure password hashing algorithm (e.g., BCrypt, Argon2)
-- Review and adjust CORS policies for production
+### For Production Deployment:
+
+1. **JWT Secret Key**: Move `JwtSettings:SecretKey` to environment variables or a secure key management service (e.g., Azure Key Vault, AWS Secrets Manager)
+   ```bash
+   # Set via environment variable
+   export JwtSettings__SecretKey="your-production-secret-key"
+   ```
+
+2. **Password Hashing**: The application uses BCrypt for secure password hashing with automatic salt generation
+
+3. **HTTPS**: Always use HTTPS in production. The application is configured to redirect HTTP to HTTPS
+
+4. **CORS**: Update the CORS policy in `Program.cs` to restrict origins to your specific domains:
+   ```csharp
+   policy.WithOrigins("https://yourdomain.com")
+         .AllowAnyMethod()
+         .AllowAnyHeader();
+   ```
+
+5. **Database**: Use a production-grade database (SQL Server, PostgreSQL) instead of SQLite
+
+6. **Logging**: Ensure sensitive data (passwords, tokens) is never logged
+
+7. **Rate Limiting**: Consider implementing rate limiting to prevent brute force attacks
+
+## Production Configuration
+
+### Environment Variables
+
+Set these environment variables for production:
+
+```bash
+ConnectionStrings__DefaultConnection="Server=...;Database=...;User Id=...;Password=..."
+JwtSettings__SecretKey="your-very-secure-secret-key-at-least-32-characters"
+JwtSettings__Issuer="YourProductionIssuer"
+JwtSettings__Audience="YourProductionAudience"
+JwtSettings__ExpiryMinutes="60"
+```
 
 ## License
 

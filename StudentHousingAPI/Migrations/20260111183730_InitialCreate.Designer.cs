@@ -11,7 +11,7 @@ using StudentHousingAPI.Data;
 namespace StudentHousingAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260111183125_InitialCreate")]
+    [Migration("20260111183730_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

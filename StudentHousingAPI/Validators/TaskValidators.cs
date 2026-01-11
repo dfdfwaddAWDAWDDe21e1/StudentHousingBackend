@@ -19,6 +19,11 @@ public class CreateTaskRequestValidator : AbstractValidator<CreateTaskRequest>
             .GreaterThan(0).WithMessage("Valid BuildingId is required");
 
         RuleFor(x => x.DueDate)
-            .GreaterThan(DateTime.UtcNow).WithMessage("Due date must be in the future");
+            .Must(BeInTheFuture).WithMessage("Due date must be in the future");
+    }
+
+    private bool BeInTheFuture(DateTime dueDate)
+    {
+        return dueDate > DateTime.UtcNow;
     }
 }
