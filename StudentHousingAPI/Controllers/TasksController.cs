@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using StudentHousingAPI.Data;
 using StudentHousingAPI.DTOs;
 using StudentHousingAPI.Models;
-using System.Security.Claims;
+using StudentHousingAPI.Extensions;
 
 namespace StudentHousingAPI.Controllers;
 
@@ -24,8 +24,8 @@ public class TasksController : ControllerBase
     [HttpGet("cleaning")]
     public async Task<ActionResult<IEnumerable<CleaningTaskDto>>> GetCleaningTasks()
     {
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var userRole = User.FindFirstValue(ClaimTypes.Role);
+        var userId = User.GetUserId();
+        var userRole = User.GetUserRole();
 
         var query = _context.CleaningTasks
             .Include(t => t.Building)
@@ -63,8 +63,8 @@ public class TasksController : ControllerBase
     [HttpGet("garbage")]
     public async Task<ActionResult<IEnumerable<GarbageTaskDto>>> GetGarbageTasks()
     {
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var userRole = User.FindFirstValue(ClaimTypes.Role);
+        var userId = User.GetUserId();
+        var userRole = User.GetUserRole();
 
         var query = _context.GarbageTasks
             .Include(t => t.Building)
@@ -213,7 +213,7 @@ public class TasksController : ControllerBase
     [Authorize(Roles = "Student")]
     public async Task<ActionResult> CompleteCleaningTask(int id)
     {
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var userId = User.GetUserId();
         var task = await _context.CleaningTasks.FindAsync(id);
 
         if (task == null)
@@ -237,7 +237,7 @@ public class TasksController : ControllerBase
     [Authorize(Roles = "Student")]
     public async Task<ActionResult> CompleteGarbageTask(int id)
     {
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var userId = User.GetUserId();
         var task = await _context.GarbageTasks.FindAsync(id);
 
         if (task == null)

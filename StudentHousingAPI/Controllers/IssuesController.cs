@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using StudentHousingAPI.Data;
 using StudentHousingAPI.DTOs;
 using StudentHousingAPI.Models;
-using System.Security.Claims;
+using StudentHousingAPI.Extensions;
 
 namespace StudentHousingAPI.Controllers;
 
@@ -25,8 +25,8 @@ public class IssuesController : ControllerBase
         [FromQuery] string? status = null,
         [FromQuery] int? buildingId = null)
     {
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var userRole = User.FindFirstValue(ClaimTypes.Role);
+        var userId = User.GetUserId();
+        var userRole = User.GetUserRole();
 
         var query = _context.Issues
             .Include(i => i.CreatedByUser)
@@ -78,8 +78,8 @@ public class IssuesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<IssueDto>> GetIssue(int id)
     {
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var userRole = User.FindFirstValue(ClaimTypes.Role);
+        var userId = User.GetUserId();
+        var userRole = User.GetUserRole();
 
         var issue = await _context.Issues
             .Include(i => i.CreatedByUser)
@@ -122,7 +122,7 @@ public class IssuesController : ControllerBase
     [Authorize(Roles = "Student")]
     public async Task<ActionResult<IssueDto>> CreateIssue(CreateIssueRequest request)
     {
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var userId = User.GetUserId();
 
         var building = await _context.Buildings.FindAsync(request.BuildingId);
         if (building == null)

@@ -43,6 +43,8 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 // Configure CORS for MAUI app
+// WARNING: For production, restrict to specific origins instead of AllowAnyOrigin()
+// Example: policy.WithOrigins("https://yourdomain.com").AllowAnyMethod().AllowAnyHeader();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("MauiApp", policy =>
