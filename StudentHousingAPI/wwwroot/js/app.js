@@ -286,27 +286,27 @@ function displayDashboard(stats) {
     
     container.innerHTML = `
         <div class="stat-card">
-            <h3>${stats.openIssuesCount}</h3>
+            <h3>${stats.openIssues}</h3>
             <p>Open Issues</p>
         </div>
         <div class="stat-card">
-            <h3>${stats.inProgressIssuesCount}</h3>
+            <h3>${stats.inProgressIssues}</h3>
             <p>In Progress Issues</p>
         </div>
         <div class="stat-card">
-            <h3>${stats.resolvedIssuesCount}</h3>
+            <h3>${stats.resolvedIssues}</h3>
             <p>Resolved Issues</p>
         </div>
         <div class="stat-card">
-            <h3>${stats.closedIssuesCount}</h3>
+            <h3>${stats.closedIssues}</h3>
             <p>Closed Issues</p>
         </div>
         <div class="stat-card">
-            <h3>${stats.overdueTasksCount}</h3>
+            <h3>${stats.overdueTasks}</h3>
             <p>Overdue Tasks</p>
         </div>
         <div class="stat-card">
-            <h3>${stats.tasksDueTodayCount}</h3>
+            <h3>${stats.tasksDueToday}</h3>
             <p>Tasks Due Today</p>
         </div>
     `;
