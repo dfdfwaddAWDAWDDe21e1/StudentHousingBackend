@@ -1,0 +1,14 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HousingApp.CalendarPage"
+             BackgroundColor="#F6F8FA">
+  <VerticalStackLayout Padding="20" Spacing="16">
+    <Label Text="Calendar" FontSize="24" FontAttributes="Bold"/>
+    <Frame CornerRadius="14">
+      <Label Text="January 2026" HorizontalOptions="Center"/>
+    </Frame>
+    <Frame CornerRadius="14">
+      <Label Text="No events today" HorizontalOptions="Center"/>
+    </Frame>
+  </VerticalStackLayout>
+</ContentPage>

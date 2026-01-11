@@ -1,0 +1,60 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HousingApp.HomePage"
+             BackgroundColor="{StaticResource AppBackground}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="14">
+
+            <!-- Header -->
+            <Label Text="Hey, Alex 👋"
+                   FontSize="24"
+                   FontAttributes="Bold"/>
+
+            <!-- Balance Card -->
+            <Frame BackgroundColor="{StaticResource PrimaryGreen}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Total due this month"
+                           TextColor="White"
+                           FontSize="12"/>
+                    <Label Text="$847.50"
+                           TextColor="White"
+                           FontSize="30"
+                           FontAttributes="Bold"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Label Text="Your Bills"
+                   FontAttributes="Bold"
+                   FontSize="14"
+                   TextColor="{StaticResource TextSecondary}"/>
+
+            <!-- Bill cards -->
+            <Frame>
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Rent"/>
+                    <Label Text="$650" Grid.Column="1"/>
+                </Grid>
+            </Frame>
+
+            <Frame>
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Internet"/>
+                    <Label Text="$45.50" Grid.Column="1"/>
+                </Grid>
+            </Frame>
+
+            <!-- Energy -->
+            <Frame>
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Energy Usage" FontAttributes="Bold"/>
+                    <ProgressBar Progress="0.6" HeightRequest="4"/>
+                    <Label Text="245 kWh this month"
+                           FontSize="11"
+                           TextColor="{StaticResource TextSecondary}"/>
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

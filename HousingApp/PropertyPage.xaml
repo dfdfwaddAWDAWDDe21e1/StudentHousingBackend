@@ -1,0 +1,26 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="HousingApp.PropertyPage"
+             BackgroundColor="#F6F8FA">
+  <ScrollView>
+    <VerticalStackLayout Padding="20" Spacing="16">
+      <Label Text="Property" FontSize="24" FontAttributes="Bold"/>
+      <Frame CornerRadius="14" BackgroundColor="#E7F8F4">
+        <Label Text="Document any damage when you move in."/>
+      </Frame>
+
+      <Label Text="Photos" FontAttributes="Bold"/>
+      <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="10" ColumnSpacing="10">
+        <Frame Grid.Row="0" Grid.Column="0" CornerRadius="12">
+          <Label Text="Kitchen"/>
+        </Frame>
+        <Frame Grid.Row="0" Grid.Column="1" CornerRadius="12">
+          <Label Text="Living Room"/>
+        </Frame>
+        <Frame Grid.Row="1" Grid.Column="0" CornerRadius="12">
+          <Label Text="Bathroom"/>
+        </Frame>
+      </Grid>
+    </VerticalStackLayout>
+  </ScrollView>
+</ContentPage>
